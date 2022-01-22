@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions } from 'react-native'
 import axios from "axios";
-import { API, COUNTRY, KEY, TOP_HEADLINES, CATEGORY, EG, BUSINESS,SOURCES } from "../../functions/config";
+import { API, COUNTRY, KEY, TOP_HEADLINES, CATEGORY, EG, BUSINESS, SOURCES } from "../functions/config";
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
 
-export default class tab2 extends Component {
+export default class sourceHeadlines extends Component {
     constructor(props) {
         super(props);
     }
@@ -16,13 +16,18 @@ export default class tab2 extends Component {
         fetching_from_server: false,
         endThreshold: 2,
         refreshing: false,
+        source:''
     }
 
     componentDidMount = async () => {
         await this.setState({ isReady: false });
         const { navigation } = this.props;
+        const Data = this.props.route.params.data
+        console.log("ddsdsd",Data)
+        await this.setState({source: Data,});
         await this.Get_News('reset');
         await this.setState({ isReady: true });
+        console.log(this.state.data)
     }
 
 
@@ -31,11 +36,10 @@ export default class tab2 extends Component {
         const token = this.state.token;
         if (mode == 'reset') {
             await axios
-                .get(API + TOP_HEADLINES + "/" +SOURCES+ "?"+ "page=1" + "&apiKey=" + KEY)
-                //.https://newsapi.org/v2/top-headlines/sources?apiKey=API_KEY
+                .get( API + TOP_HEADLINES + "?"+ SOURCES + "=" + this.state.source + "&" + "page=1" + "&apiKey=" + KEY)
                 .then(result => {
                     this.setState({
-                        data: result.data.sources,
+                        data: result.data.articles,
                         page: 2 //next page
                     })
                 })
@@ -49,12 +53,12 @@ export default class tab2 extends Component {
         } else {
             console.log('get data of page -> ' + this.state.page)
             await axios
-                .get(API + TOP_HEADLINES + COUNTRY + EG + CATEGORY + BUSINESS + "page=" + this.state.page + "&apiKey" + KEY)
-                .then(result => {
+            .get( API + TOP_HEADLINES + "/"+ SOURCES + "=" + this.state.source + "&" + this.state.page + "&apiKey=" + KEY)
+            .then(result => {
                     console.log("iamhere")
-                    if (result.data.sources.length > 0) {
+                    if (result.data.articles.length > 0) {
                         this.setState({
-                            data: [...this.state.data, ...result.data.sources]
+                            data: [...this.state.data, ...result.data.articles]
                         })
                         this.setState({ page: this.state.page + 1 })
 
@@ -87,7 +91,7 @@ export default class tab2 extends Component {
 
         return (
             <View padder style={{ flex: 1, alignContent: 'center', justifyContent: 'center', backgroundColor: 'lightgrey', justifyContent: 'flex-start' }}>
-                <Text style={{ alignSelf: 'flex-start', justifyContent: 'center', padding: 7, textAlign: 'left', fontWeight: 'bold' }}>Top news sources </Text>
+                <Text style={{ alignSelf: 'flex-start', justifyContent: 'center', padding: 7, textAlign: 'left', fontWeight: 'bold' }}>Top headlines </Text>
 
                 {this.state.data.length > 0 ?
                     <FlatList
@@ -111,20 +115,30 @@ export default class tab2 extends Component {
                         renderItem={({ item, index, separators }) => {
                             let value = item;
                             return (
-                                <TouchableWithoutFeedback 
-                                onPress={() => this.props.navigation.navigate("SourceHeadlines", {
-                                    data: value.id,
-                                })}  
-                                key={index} data={value} >
+                                <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate("SourceDetails", {
+                                    data: item,
+                                })}  key={index} data={value} >
                                     <View style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
-                                
+                                       
 
-                                        <View style={[{ paddingHorizontal: 1 , width: deviceWidth / 1.1 }]}  >
-                                            <Text numberOfLines={2} ellipsizeMode='tail' style={[Pagestyles.cardText,{fontWeight:'bold',color:'black'}]}>{value.name} </Text>
-                                            <Text numberOfLines={2}  style={Pagestyles.cardText}>{value.description}</Text>
-                                            <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>Category: {value.category}</Text>
-                                            <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>country: {value.country}, language: {value.language}</Text>
+                                        <View style={[{ paddingHorizontal: 5 }, value.urlToImage ? { width: deviceWidth / 1.5 } : { width: deviceWidth / 1.1 }]}  >
+                                            <Text numberOfLines={2} ellipsizeMode='tail' style={Pagestyles.cardText}>{value.title} </Text>
+                                            <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>source: {value.author}</Text>
+                                            <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>published at: {value.publishedAt}</Text>
+
                                         </View>
+
+                                        {value.urlToImage ?
+                                            <View style={{ justifyContent: 'center', alignSelf: 'center' }}>
+                                                <TouchableOpacity onPress={() => this.props.navigation.navigate("SourceDetails", {
+                                                    data: item,
+                                                })}  >
+                                                    <Image resizeMode={'contain'} source={{ uri: value.urlToImage }}
+                                                        style={{ width: 80, height: 80, alignSelf: 'center' }} />
+                                                </TouchableOpacity>
+
+                                            </View>
+                                            : null}
                                     </View>
                                 </TouchableWithoutFeedback>
                             )
@@ -146,9 +160,9 @@ export default class tab2 extends Component {
 const Pagestyles = StyleSheet.create({
 
     container: { alignSelf: 'center', justifyContent: 'center', },
-    listContainer: { flexDirection: 'row', alignSelf: 'center', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1,padding:5},
+    listContainer: { flexDirection: 'row', alignSelf: 'center', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1 },
     cardText: {
         alignSelf:
-            'flex-start',  textAlign: 'left',paddingEnd:3
+            'flex-start', textAlignVertical: 'top', textAlign: 'left'
     }
 })

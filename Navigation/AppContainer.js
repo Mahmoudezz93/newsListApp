@@ -8,21 +8,46 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // import screen // 
 import splash from "../sceens/splash";
 
-// Main stack // 
-import homePage from "../sceens/homePage";
+// News stack // 
 import tab1 from "../sceens/tabs/tab1";
-import tab2 from "../sceens/tabs/tab2";
-import tab3 from "../sceens/tabs/tab3";
 import detailsPage from "../sceens/detailsPage";
 
 
-const MainStackNavigator = createStackNavigator();
-export const MainNavigator = () => {
+// Sources Stack // 
+import tab2 from "../sceens/tabs/tab2";
+import sourceHeadlines from "../sceens/sourcesHeadlines" 
+import sourceDetails from "../sceens/sourceDetails"
+
+import homePage from "../sceens/homePage";
+import tab3 from "../sceens/tabs/tab3";
+
+
+
+
+
+const SourcesStackNavigator = createStackNavigator();
+export const SourcesNavigator = () => {
     return (
-        <MainStackNavigator.Navigator initialRouteName="MainHeadlines" screenOptions={{ headerShown: false }}>
-            <MainStackNavigator.Screen name="MainHeadlines"  component={tab1} />
-            <MainStackNavigator.Screen name="headlineDetails" component={detailsPage} />
-        </MainStackNavigator.Navigator>
+        <SourcesStackNavigator.Navigator initialRouteName="MainHeadlines" screenOptions={{ headerShown: false }}>
+            <SourcesStackNavigator.Screen name="Soruces"  component={tab2} />
+            <SourcesStackNavigator.Screen name="SourceHeadlines" component={sourceHeadlines} />
+            <SourcesStackNavigator.Screen name="SourceDetails" component={sourceDetails} />
+
+        </SourcesStackNavigator.Navigator>
+    )
+}
+
+
+
+
+
+const NewsStackNavigator = createStackNavigator();
+export const NewsNavigator = () => {
+    return (
+        <NewsStackNavigator.Navigator initialRouteName="MainHeadlines" screenOptions={{ headerShown: false }}>
+            <NewsStackNavigator.Screen name="MainHeadlines"  component={tab1} />
+            <NewsStackNavigator.Screen name="headlineDetails" component={detailsPage} />
+        </NewsStackNavigator.Navigator>
     )
 }
 
@@ -49,8 +74,8 @@ export const TabNavigator = () => {
                 tabBarActiveTintColor: 'Blue',
                 tabBarInactiveTintColor: 'gray',
             })}>
-            <TabStackNavigator.Screen name="News" component={MainNavigator} />
-            <TabStackNavigator.Screen name="Sources" component={tab2} />
+            <TabStackNavigator.Screen name="News" component={NewsNavigator} />
+            <TabStackNavigator.Screen name="Sources" component={SourcesNavigator} />
             <TabStackNavigator.Screen name="Histroy" component={tab3} />
             
         </TabStackNavigator.Navigator>

@@ -32,7 +32,7 @@ export default class tab1 extends Component {
         if (mode == 'reset') {
             await axios
                 //  console.log(API+ TOP_HEADLINES + COUNTRY + EG + CATEGORY+ BUSINESS + "page=1" + "&apiKey=" + KEY)
-                .get(API + TOP_HEADLINES + COUNTRY + EG + CATEGORY + BUSINESS + "page=1" + "&apiKey=" + KEY)
+                .get(API + TOP_HEADLINES+ "?" + COUNTRY + EG + CATEGORY + BUSINESS + "page=1" + "&apiKey=" + KEY)
                 //.get("https://newsapi.org/v2/top-headlines?country=eg&category=business&page=1&apiKey=31dd32c59802475889262ef8b62bbc2b")
                 .then(result => {
                     this.setState({
