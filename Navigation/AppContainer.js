@@ -13,17 +13,25 @@ import homePage from "../sceens/homePage";
 import tab1 from "../sceens/tabs/tab1";
 import tab2 from "../sceens/tabs/tab2";
 import tab3 from "../sceens/tabs/tab3";
+import detailsPage from "../sceens/detailsPage";
 
 
-
-
-
-
-
-const MainStackNavigator = createBottomTabNavigator();
+const MainStackNavigator = createStackNavigator();
 export const MainNavigator = () => {
     return (
-        <MainStackNavigator.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}
+        <MainStackNavigator.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+            <MainStackNavigator.Screen name="headlineDetails" component={detailsPage} />
+        </MainStackNavigator.Navigator>
+    )
+}
+
+
+
+
+const TabStackNavigator = createBottomTabNavigator();
+export const TabNavigator = () => {
+    return (
+        <TabStackNavigator.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}
 
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) => {
@@ -38,15 +46,14 @@ export const MainNavigator = () => {
                     // You can return any component that you like here!
                     return <Ionicons name={iconName} size={size} color={color} />;
                 },
-                tabBarActiveTintColor: 'tomato',
+                tabBarActiveTintColor: 'Blue',
                 tabBarInactiveTintColor: 'gray',
             })}
         >
-            <MainStackNavigator.Screen name="News" component={tab1} />
-            <MainStackNavigator.Screen name="Sources" component={tab2} />
-            <MainStackNavigator.Screen name="Histroy" component={tab3} />
-
-        </MainStackNavigator.Navigator>
+            <TabStackNavigator.Screen name="News" component={tab1} />
+            <TabStackNavigator.Screen name="Sources" component={tab2} />
+            <TabStackNavigator.Screen name="Histroy" component={tab3} />
+        </TabStackNavigator.Navigator>
     )
 }
 
@@ -58,9 +65,9 @@ const IntroStack = createStackNavigator();
 export default AppContainer = (props) => {
     return (
         <NavigationContainer>
-            <IntroStack.Navigator initialRouteName="Splash">
+            <IntroStack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }} >
                 <IntroStack.Screen name="Splash" component={splash} />
-                <IntroStack.Screen name="Main" component={MainNavigator} />
+                <IntroStack.Screen name="Main" component={TabNavigator} />
             </IntroStack.Navigator>
         </NavigationContainer>
     );
