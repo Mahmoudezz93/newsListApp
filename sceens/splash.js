@@ -7,7 +7,7 @@ export default class rootscreen extends Component {
 
     componentDidMount = async () => {
         this.timeoutHandle = setTimeout(() => {
-            this.props.navigation.replace("Main");
+            this.props.navigation.replace("Tabs");
         }, 3000);
     }
 

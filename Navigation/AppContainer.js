@@ -19,7 +19,8 @@ import detailsPage from "../sceens/detailsPage";
 const MainStackNavigator = createStackNavigator();
 export const MainNavigator = () => {
     return (
-        <MainStackNavigator.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+        <MainStackNavigator.Navigator initialRouteName="MainHeadlines" screenOptions={{ headerShown: false }}>
+            <MainStackNavigator.Screen name="MainHeadlines"  component={tab1} />
             <MainStackNavigator.Screen name="headlineDetails" component={detailsPage} />
         </MainStackNavigator.Navigator>
     )
@@ -31,8 +32,7 @@ export const MainNavigator = () => {
 const TabStackNavigator = createBottomTabNavigator();
 export const TabNavigator = () => {
     return (
-        <TabStackNavigator.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}
-
+        <TabStackNavigator.Navigator initialRouteName="News" screenOptions={{ headerShown: false }}
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
@@ -48,11 +48,11 @@ export const TabNavigator = () => {
                 },
                 tabBarActiveTintColor: 'Blue',
                 tabBarInactiveTintColor: 'gray',
-            })}
-        >
-            <TabStackNavigator.Screen name="News" component={tab1} />
+            })}>
+            <TabStackNavigator.Screen name="News" component={MainNavigator} />
             <TabStackNavigator.Screen name="Sources" component={tab2} />
             <TabStackNavigator.Screen name="Histroy" component={tab3} />
+            
         </TabStackNavigator.Navigator>
     )
 }
@@ -67,7 +67,7 @@ export default AppContainer = (props) => {
         <NavigationContainer>
             <IntroStack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }} >
                 <IntroStack.Screen name="Splash" component={splash} />
-                <IntroStack.Screen name="Main" component={TabNavigator} />
+                <IntroStack.Screen name="Tabs" component={TabNavigator} />
             </IntroStack.Navigator>
         </NavigationContainer>
     );

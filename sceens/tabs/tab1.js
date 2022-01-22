@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions } from 'react-native'
 import axios from "axios";
 import { API, COUNTRY, KEY, TOP_HEADLINES, CATEGORY, EG, BUSINESS } from "../../functions/config";
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
 
@@ -19,6 +20,7 @@ export default class tab1 extends Component {
 
     componentDidMount = async () => {
         await this.setState({ isReady: false });
+        const { navigation } = this.props;
         await this.Get_News('reset');
         await this.setState({ isReady: true });
     }
@@ -65,8 +67,6 @@ export default class tab1 extends Component {
                     console.log(error.response.data.error);
                 });
         }
-        // console.log(this.state.data);
-        console.log(this.state.data)
         this.setState({ fetching_from_server: false });
 
     }
@@ -93,7 +93,7 @@ export default class tab1 extends Component {
                 {this.state.data.length > 0 ?
                     <FlatList
                         style={{
-                            flex: 1, alignSelf: 'center',   
+                            flex: 1, alignSelf: 'center',
                             alignContent: 'center', paddingTop: 1.5
                             , paddingBottom: 10, paddingHorizontal: 1, marginTop: 5,
                         }}
@@ -112,23 +112,28 @@ export default class tab1 extends Component {
                         renderItem={({ item, index, separators }) => {
                             let value = item;
                             return (
-                                < View key={index} data={value} style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
-                                    {value.urlToImage ?
-                                        <View style={{ justifyContent: 'center', alignSelf: 'center' }}>
-                                            <TouchableOpacity >
-                                                <Image resizeMode={'contain'} source={{ uri: value.urlToImage }}
-                                                    style={{ width: 80, height: 80, alignSelf: 'center' }} />
-                                            </TouchableOpacity>
+                                <TouchableWithoutFeedback key={index} data={value} >
+                                    <View style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
+                                        {value.urlToImage ?
+                                            <View style={{ justifyContent: 'center', alignSelf: 'center' }}>
+                                                <TouchableOpacity onPress={() => this.props.navigation.navigate("headlineDetails", {
+                                                    data: item,
+                                                })}  >
+                                                    <Image resizeMode={'contain'} source={{ uri: value.urlToImage }}
+                                                        style={{ width: 80, height: 80, alignSelf: 'center' }} />
+                                                </TouchableOpacity>
+
+                                            </View>
+                                            : null}
+
+                                        <View style={[{ paddingHorizontal: 1 }, value.urlToImage ? { width: deviceWidth / 1.5 } : { width: deviceWidth / 1.1 }]}  >
+                                            <Text numberOfLines={2} ellipsizeMode='tail' style={Pagestyles.cardText}>{value.title} </Text>
+                                            <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>  المصدر: {value.author}</Text>
+                                            <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>   تاريخ النشر{value.publishedAt}</Text>
 
                                         </View>
-                                        : null}
-                                    <View style={[{ paddingHorizontal: 1 }, value.urlToImage ? { width: deviceWidth / 1.5 } : { width: deviceWidth / 1.1 }]}  >
-                                        <Text numberOfLines={2} ellipsizeMode='tail' style={Pagestyles.cardText}>{value.title} </Text>
-                                        <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>  المصدر: {value.author}</Text>
-                                        <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>   تاريخ النشر{value.publishedAt}</Text>
-
                                     </View>
-                                </View>
+                                </TouchableWithoutFeedback>
                             )
                         }
                         }
