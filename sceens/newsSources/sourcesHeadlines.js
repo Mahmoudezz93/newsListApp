@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions } from 'react-native'
 import axios from "axios";
-import { API, COUNTRY, KEY, TOP_HEADLINES, CATEGORY, EG, BUSINESS, SOURCES } from "../functions/config";
+import { API, COUNTRY, KEY, TOP_HEADLINES, CATEGORY, EG, BUSINESS, SOURCES } from "../../functions/config";
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
