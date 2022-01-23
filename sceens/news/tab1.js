@@ -3,10 +3,14 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions }
 import axios from "axios";
 import { API, COUNTRY, KEY, TOP_HEADLINES, CATEGORY, EG, BUSINESS } from "../../functions/config";
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+//redux 
+import { connect } from "react-redux";
+import { addItem, deleteItem, setItems } from "../../store/actions/index";
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
 
-export default class tab1 extends Component {
+class tab1 extends Component {
+
     constructor(props) {
         super(props);
     }
@@ -15,14 +19,18 @@ export default class tab1 extends Component {
         data: [], isReady: false, page: 1,
         fetching_from_server: false,
         endThreshold: 2,
-        refreshing: false,
+        refreshing: false, dateNow: ''
     }
 
     componentDidMount = async () => {
         await this.setState({ isReady: false });
         const { navigation } = this.props;
         await this.Get_News('reset');
-        await this.setState({ isReady: true });
+        const today = new Date();
+        await this.setState({
+            dateNow: today,
+            isReady: true
+        });
     }
 
 
@@ -32,7 +40,7 @@ export default class tab1 extends Component {
         if (mode == 'reset') {
             await axios
                 //  console.log(API+ TOP_HEADLINES + COUNTRY + EG + CATEGORY+ BUSINESS + "page=1" + "&apiKey=" + KEY)
-                .get(API + TOP_HEADLINES+ "?" + COUNTRY + EG + CATEGORY + BUSINESS + "page=1" + "&apiKey=" + KEY)
+                .get(API + TOP_HEADLINES + "?" + COUNTRY + EG + CATEGORY + BUSINESS + "page=1" + "&apiKey=" + KEY)
                 //.get("https://newsapi.org/v2/top-headlines?country=eg&category=business&page=1&apiKey=31dd32c59802475889262ef8b62bbc2b")
                 .then(result => {
                     this.setState({
@@ -79,9 +87,32 @@ export default class tab1 extends Component {
         });
     }
 
+    Procced = async (headline) => {
+        console.log("will added to cart")
 
+        await this.AddToCart(headline);
+        console.log("added to cart")
+        await this.props.navigation.navigate("headlineDetails", { data: headline, })
+    }
 
-
+    AddToCart = async (value) => {
+        let item = value;
+        const newItem = {
+            id: item.source.id ? item.source.id : null ,
+            name: item.source.name,
+            author: item.author,
+            note: item.note,
+            title: item.title,
+            description: item.description,
+            url: item.url,
+            urlToImage: item.urlToImage,
+            publishedAt: item.publishedAt,
+            content: item.content,
+            viewdAt: this.state.dateNow
+        }
+        await this.props.OnAdd(newItem);
+        console.log(this.props.RX_items);
+    }
 
 
     render() {
@@ -116,9 +147,7 @@ export default class tab1 extends Component {
                                     <View style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
                                         {value.urlToImage ?
                                             <View style={{ justifyContent: 'center', alignSelf: 'center' }}>
-                                                <TouchableOpacity onPress={() => this.props.navigation.navigate("headlineDetails", {
-                                                    data: item,
-                                                })}  >
+                                                <TouchableOpacity onPress={() => this.Procced(value)}  >
                                                     <Image resizeMode={'contain'} source={{ uri: value.urlToImage }}
                                                         style={{ width: 80, height: 80, alignSelf: 'center' }} />
                                                 </TouchableOpacity>
@@ -150,12 +179,33 @@ export default class tab1 extends Component {
 }
 
 
-const Pagestyles = StyleSheet.create({
+    const Pagestyles = StyleSheet.create({
 
-    container: { alignSelf: 'center', justifyContent: 'center', },
-    listContainer: { flexDirection: 'row', alignSelf: 'center', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1 },
-    cardText: {
-        alignSelf:
-            'flex-end', textAlignVertical: 'top', textAlign: 'right'
+        container: { alignSelf: 'center', justifyContent: 'center', },
+        listContainer: { flexDirection: 'row', alignSelf: 'center', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1 },
+        cardText: {
+            alignSelf:
+                'flex-end', textAlignVertical: 'top', textAlign: 'right'
+        }
+    })
+
+
+
+
+
+    const mapStateToProps = state => {
+        return {
+            RX_items: state.cart.items,
+        };
     }
-})
+    const mapDispatchToProps = dispatch => {
+        return {
+            OnAdd: item => { dispatch(addItem(item)) },
+            OnRemove: item => { dispatch(deleteItem(item)) },
+            OnSetAll: items => { dispatch(setItems(items)) }
+        };
+    }
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(tab1);
+

@@ -5,8 +5,11 @@ import { API, COUNTRY, KEY, TOP_HEADLINES, CATEGORY, EG, BUSINESS, SOURCES } fro
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
+//redux 
+import { connect } from "react-redux";
+import { addItem, deleteItem, setItems } from "../../store/actions/index";
 
-export default class sourceHeadlines extends Component {
+class sourceHeadlines extends Component {
     constructor(props) {
         super(props);
     }
@@ -82,7 +85,32 @@ export default class sourceHeadlines extends Component {
         });
     }
 
+    Procced = async (headline) => {
+        console.log("will added to cart")
 
+        await this.AddToCart(headline);
+        console.log("added to cart")
+        await this.props.navigation.navigate("SourceDetails", { data: headline, })
+    }
+
+    AddToCart = async (value) => {
+        let item = value;
+        const newItem = {
+            id: item.source.id ? item.source.id : null ,
+            name: item.source.name,
+            author: item.author,
+            note: item.note,
+            title: item.title,
+            description: item.description,
+            url: item.url,
+            urlToImage: item.urlToImage,
+            publishedAt: item.publishedAt,
+            content: item.content,
+            viewdAt: this.state.dateNow
+        }
+        await this.props.OnAdd(newItem);
+        console.log(this.props.RX_items);
+    }
 
 
 
@@ -115,9 +143,7 @@ export default class sourceHeadlines extends Component {
                         renderItem={({ item, index, separators }) => {
                             let value = item;
                             return (
-                                <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate("SourceDetails", {
-                                    data: item,
-                                })}  key={index} data={value} >
+                                <TouchableWithoutFeedback onPress={() => this.Procced(value)} >
                                     <View style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
                                        
 
@@ -166,3 +192,22 @@ const Pagestyles = StyleSheet.create({
             'flex-start', textAlignVertical: 'top', textAlign: 'left'
     }
 })
+
+
+
+
+
+const mapStateToProps = state => {
+    return {
+        RX_items: state.cart.items,
+    };
+}
+const mapDispatchToProps = dispatch => {
+    return {
+        OnAdd: item => { dispatch(addItem(item)) },
+        OnRemove: item => { dispatch(deleteItem(item)) },
+        OnSetAll: items => { dispatch(setItems(items)) }
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(sourceHeadlines);
