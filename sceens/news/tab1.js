@@ -8,7 +8,8 @@ import { connect } from "react-redux";
 import { addItem, deleteItem, setItems } from "../../store/actions/index";
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
-
+const Default_image = require("../../assets/no_image.jpg");
+import Loader from "../loader"; 
 class tab1 extends Component {
 
     constructor(props) {
@@ -39,9 +40,9 @@ class tab1 extends Component {
         const token = this.state.token;
         if (mode == 'reset') {
             await axios
-                //  console.log(API+ TOP_HEADLINES + COUNTRY + EG + CATEGORY+ BUSINESS + "page=1" + "&apiKey=" + KEY)
+                
                 .get(API + TOP_HEADLINES + "?" + COUNTRY + EG + CATEGORY + BUSINESS + "page=1" + "&apiKey=" + KEY)
-                //.get("https://newsapi.org/v2/top-headlines?country=eg&category=business&page=1&apiKey=31dd32c59802475889262ef8b62bbc2b")
+               
                 .then(result => {
                     this.setState({
                         data: result.data.articles,
@@ -116,8 +117,9 @@ class tab1 extends Component {
 
 
     render() {
-
+        
         return (
+            this.state.isReady ?
             <View padder style={{ flex: 1, alignContent: 'center', justifyContent: 'center', backgroundColor: 'black', justifyContent: 'flex-start' }}>
                 <Text style={{ alignSelf: 'center',fontSize:18, justifyContent: 'center', padding: 7, textAlign: 'left', fontWeight: 'light',color:'white' }}>What's New?</Text>
 
@@ -151,7 +153,7 @@ class tab1 extends Component {
                                         {value.urlToImage ?
                                             <View style={{ justifyContent: 'center', alignSelf: 'center' }}>
                                                 <TouchableOpacity onPress={() => this.Procced(value)}  >
-                                                    <Image resizeMode={'cover'} source={{ uri: value.urlToImage }}
+                                                    <Image resizeMode={'cover'} source={{ uri: value.urlToImage ?value.urlToImage : Default_image  }} defaultSource={Default_image} 
                                                         style={Pagestyles.imageStyle} />
                                                 </TouchableOpacity>
 
@@ -176,7 +178,7 @@ class tab1 extends Component {
                     </View>}
 
             </View>
-
+            : <Loader/>
         )
     }
 }

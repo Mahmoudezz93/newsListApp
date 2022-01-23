@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions } from 'react-native'
 import axios from "axios";
-import { API, COUNTRY, KEY, TOP_HEADLINES, CATEGORY, EG, BUSINESS,SOURCES } from "../../functions/config";
+import { API, COUNTRY, KEY, TOP_HEADLINES, CATEGORY, EG, BUSINESS, SOURCES } from "../../functions/config";
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import Loader from '../loader';
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
 
@@ -31,7 +32,7 @@ export default class tab2 extends Component {
         const token = this.state.token;
         if (mode == 'reset') {
             await axios
-                .get(API + TOP_HEADLINES + "/" +SOURCES+ "?"+ "page=1" + "&apiKey=" + KEY)
+                .get(API + TOP_HEADLINES + "/" + SOURCES + "?" + "page=1" + "&apiKey=" + KEY)
                 //.https://newsapi.org/v2/top-headlines/sources?apiKey=API_KEY
                 .then(result => {
                     this.setState({
@@ -86,58 +87,58 @@ export default class tab2 extends Component {
     render() {
 
         return (
-            <View padder style={{ flex: 1, alignContent: 'center', justifyContent: 'center', backgroundColor: 'lightgrey', justifyContent: 'flex-start' }}>
-                <Text style={{ alignSelf: 'flex-start', justifyContent: 'center', padding: 7, textAlign: 'left', fontWeight: 'bold' }}>Top news sources </Text>
+            this.state.isReady ?
+                <View padder style={{ flex: 1, alignContent: 'center', justifyContent: 'center', backgroundColor: 'black', justifyContent: 'flex-start' }}>
+                    <Text style={{ alignSelf: 'center', fontSize: 18, justifyContent: 'center', padding: 7, textAlign: 'left', fontWeight: 'light', color: 'white' }}>Top Sources</Text>
+                    {this.state.data.length > 0 ?
+                        <FlatList
+                            style={{
+                                flex: 1, alignSelf: 'center',
+                                alignContent: 'center', paddingTop: 1.5
+                                , paddingBottom: 10, paddingHorizontal: 1, marginTop: 5,
+                            }}
+                            numColumns={1}
+                            contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center' }}
+                            onEndReachedThreshold={this.state.endThreshold}
+                            data={this.state.data}
 
-                {this.state.data.length > 0 ?
-                    <FlatList
-                        style={{
-                            flex: 1, alignSelf: 'center',
-                            alignContent: 'center', paddingTop: 1.5
-                            , paddingBottom: 10, paddingHorizontal: 1, marginTop: 5,
-                        }}
-                        numColumns={1}
-                        contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center' }}
-                        onEndReachedThreshold={this.state.endThreshold}
-                        data={this.state.data}
+                            onEndReached={() => {
+                                this.state.fetching_from_server == false ? this.Get_News('scroll') : null
+                            }}
+                            refreshing={this.state.refreshing}
+                            onRefresh={this._onRefresh.bind(this)}
 
-                        onEndReached={() => {
-                            this.state.fetching_from_server == false ? this.Get_News('scroll') : null
-                        }}
-                        refreshing={this.state.refreshing}
-                        onRefresh={this._onRefresh.bind(this)}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item, index, separators }) => {
+                                let value = item;
+                                return (
+                                    <TouchableWithoutFeedback
+                                        onPress={() => this.props.navigation.navigate("SourceHeadlines", {
+                                            data: value.id,
+                                        })}
+                                        key={index} data={value} >
+                                        <View style={[Pagestyles.listContainer]} >
 
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item, index, separators }) => {
-                            let value = item;
-                            return (
-                                <TouchableWithoutFeedback 
-                                onPress={() => this.props.navigation.navigate("SourceHeadlines", {
-                                    data: value.id,
-                                })}  
-                                key={index} data={value} >
-                                    <View style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
-                                
 
-                                        <View style={[{ paddingHorizontal: 1 , width: deviceWidth / 1.1 }]}  >
-                                            <Text numberOfLines={2} ellipsizeMode='tail' style={[Pagestyles.cardText,{fontWeight:'bold',color:'black'}]}>{value.name} </Text>
-                                            <Text numberOfLines={2}  style={Pagestyles.cardText}>{value.description}</Text>
-                                            <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>Category: {value.category}</Text>
-                                            <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>country: {value.country}, language: {value.language}</Text>
+                                            <View style={[{ paddingHorizontal: 1, width: deviceWidth / 1.1 }]}  >
+                                                <Text numberOfLines={2} ellipsizeMode='tail' style={[Pagestyles.cardText, { fontWeight: 'bold', color: 'white',fontSize:20 }]}>{value.name} </Text>
+                                                <Text numberOfLines={2} style={Pagestyles.cardText}>{value.description}</Text>
+                                                <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>Category: {value.category}</Text>
+                                                <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>country: {value.country}, language: {value.language}</Text>
+                                            </View>
                                         </View>
-                                    </View>
-                                </TouchableWithoutFeedback>
-                            )
-                        }
-                        }
-                    />
-                    :
-                    <View style={{ alignContent: "center", alignSelf: "center", justifyContent: "center", flex: 1, padding: 20 }}>
-                        <Text > There is no data available</Text>
-                    </View>}
+                                    </TouchableWithoutFeedback>
+                                )
+                            }
+                            }
+                        />
+                        :
+                        <View style={{ alignContent: "center", alignSelf: "center", justifyContent: "center", flex: 1, padding: 20 }}>
+                            <Text > There is no data available</Text>
+                        </View>}
 
-            </View>
-
+                </View>
+                : <Loader />
         )
     }
 }
@@ -146,9 +147,9 @@ export default class tab2 extends Component {
 const Pagestyles = StyleSheet.create({
 
     container: { alignSelf: 'center', justifyContent: 'center', },
-    listContainer: { flexDirection: 'row', alignSelf: 'center', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1,padding:5},
+    listContainer: { flexDirection: 'row', alignSelf: 'center', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1, padding: 5,backgroundColor:'#2b2b2b' },
     cardText: {
         alignSelf:
-            'flex-start',  textAlign: 'left',paddingEnd:3
+            'flex-start', textAlign: 'left', paddingEnd: 3,color:'white'
     }
 })

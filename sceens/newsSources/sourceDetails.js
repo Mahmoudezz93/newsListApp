@@ -1,9 +1,13 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions, Linking } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions, Linking, ImageBackground, ScrollView } from 'react-native'
 import axios from "axios";
 import { API, COUNTRY, KEY, TOP_HEADLINES, CATEGORY, EG, BUSINESS } from "../../functions/config";
+import LinearGradient from 'react-native-linear-gradient';
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Loader from "../loader";
+const Default_image = require("../../assets/no_image.jpg");
 
 export default class sourceDetails extends Component {
     constructor(props) {
@@ -29,58 +33,49 @@ export default class sourceDetails extends Component {
     render() {
         const value = this.state.data
         return (
-            <View padder style={{ flex: 1, alignContent: 'center', justifyContent: 'center', backgroundColor: 'lightgrey', justifyContent: 'flex-start', padding: 5, }}>
-
-                <View style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
-
-                    <View style={[{ paddingHorizontal: 1 }, value.urlToImage ? { width: deviceWidth / 1.5 } : { width: deviceWidth / 1.1 }]}  >
-                        <Text numberOfLines={2} ellipsizeMode='tail' style={Pagestyles.cardText}>{value.title} </Text>
-                        <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>ٍSource: {value.author}</Text>
-                        <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>Publish date:{value.publishedAt}</Text>
-
+            this.state.isReady ? 
+            <ScrollView padder style={{ flex: 1, alignContent: 'center', backgroundColor: 'black', padding: 5, }}>
+            <ImageBackground resizeMode='cover' style={{ height: deviceHeight / 1.4, borderRadius: 7 }} defaultSource={Default_image} source={{ uri: value.urlToImage }} >
+                <LinearGradient colors={['rgba(0,0,0,0.3)', 'transparent']}
+                    style={{ flex: 0.5, justifyContent: 'space-between' }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10, paddingHorizontal: 5 }}>
+                        <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ flexDirection: 'row', padding: 12, alignItems: 'center' }}>
+                            <Icon name={"arrow-back-ios"} size={20} color={"white"} />
+                        </TouchableOpacity>
                     </View>
+                </LinearGradient>
+                <LinearGradient colors={['transparent', 'rgba(0,0,0,0.9)',]}
+                    style={{ flex: 0.5, justifyContent: 'flex-end' }}>
+                    <Text numberOfLines={2} ellipsizeMode='tail' style={Pagestyles.cardTextMain}>{value.title} </Text><Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>{value.author} <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>{(value.publishedAt)}</Text></Text>
 
-                    {value.urlToImage ?
-                        <View style={{ justifyContent: 'center', alignSelf: 'center' }}>
-                            <TouchableOpacity >
-                                <Image resizeMode={'contain'} source={{ uri: value.urlToImage }}
-                                    style={{ width: 80, height: 80, margin: 1, alignSelf: 'center' }} />
-                            </TouchableOpacity>
-
-                        </View>
-                        : null}
-
+                </LinearGradient>
+            </ImageBackground>
+            <View style={[Pagestyles.listContainer, { backgroundColor: "#2b2b2b", marginBottom: 20,minHeight:50 }]} >
+                <View style={[{ paddingHorizontal: 1, width: deviceWidth / 1.1,justifyContent:'flex-start' }]}  >
+                     <Text onPress={() => Linking.openURL(value.url)} style={[Pagestyles.cardText, { marginVertical: 5 }]}>{value.url} </Text>
 
                 </View>
-                <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>   Content</Text>
-                <View style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
-
-                    <View style={[{ paddingHorizontal: 1, width: deviceWidth / 1.1 }]}  >
-                        <Text style={Pagestyles.cardText}>{value.description} </Text>
-                    </View>
-                </View>
-
-                <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>   Source</Text>
-                <View style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
-
-                    <View style={[{ paddingHorizontal: 1, width: deviceWidth / 1.1 }]}  >
-                        <Text onPress={() => Linking.openURL(value.url)}
-                            style={Pagestyles.cardText}>{value.url} </Text>
-                    </View>
-                </View>
-
             </View>
+
+
+        </ScrollView >
+        : <Loader />
         )
     }
 }
+
+ 
 
 
 const Pagestyles = StyleSheet.create({
 
     container: { alignSelf: 'center', justifyContent: 'center', },
-    listContainer: { flexDirection: 'row', alignSelf: 'center', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1 },
+    listContainer: { alignSelf: 'center', alignItems: 'center', justifyContent: "flex-start", marginVertical: 10, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.05, minHeight: deviceWidth / 4.5, backgroundColor: '#2b2b2b', paddingVertical: 5 },
+    imageStyle: { width: deviceWidth / 1.1, height: deviceWidth / 1.9, borderTopRightRadius: 7, borderTopLeftRadius: 7, zIndex: 20, marginBottom: 7 },
     cardText: {
-        alignSelf:
-            'flex-start', textAlignVertical: 'top', padding: 2, marginVertical: 4, textAlign: 'left', borderRadius: 4
+        alignSelf: "auto", paddingHorizontal: 3, fontSize: 16, textAlignVertical: 'top', color: 'white'
+    },
+    cardTextMain: {
+        alignSelf: "auto", paddingHorizontal: 3, fontSize: 22, textAlignVertical: 'top', color: 'white'
     }
 })

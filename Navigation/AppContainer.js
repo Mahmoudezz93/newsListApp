@@ -25,37 +25,30 @@ import historyDetails from "../sceens/newsHistory/historyDetails"
 
 
 
-
-
-const HistoryStackNavigator = createStackNavigator();
+const HistoryStackNavigator = createStackNavigator();           // Histroy Stack 
 export const HistoryNavigator = () => {
     return (
         <HistoryStackNavigator.Navigator initialRouteName="Histroy" screenOptions={{ headerShown: false }}>
             <HistoryStackNavigator.Screen name="Histroy" component={tab3} />
-             <HistoryStackNavigator.Screen name="HistoryDetails" component={historyDetails} />
-
+            <HistoryStackNavigator.Screen name="HistoryDetails" component={historyDetails} />
         </HistoryStackNavigator.Navigator>
     )
 }
 
 
-const SourcesStackNavigator = createStackNavigator();
+const SourcesStackNavigator = createStackNavigator();           // Top News Sources Stack 
 export const SourcesNavigator = () => {
     return (
-        <SourcesStackNavigator.Navigator initialRouteName="MainHeadlines"  screenOptions={{ headerShown: false }}>
+        <SourcesStackNavigator.Navigator initialRouteName="MainHeadlines" screenOptions={{ headerShown: false }}>
             <SourcesStackNavigator.Screen name="Soruces" component={tab2} />
             <SourcesStackNavigator.Screen name="SourceHeadlines" component={sourceHeadlines} />
             <SourcesStackNavigator.Screen name="SourceDetails" component={sourceDetails} />
-
         </SourcesStackNavigator.Navigator>
     )
 }
 
 
-
-
-
-const NewsStackNavigator = createStackNavigator();
+const NewsStackNavigator = createStackNavigator();              // History Stack 
 export const NewsNavigator = () => {
     return (
         <NewsStackNavigator.Navigator initialRouteName="MainHeadlines" screenOptions={{ headerShown: false }}>
@@ -68,11 +61,12 @@ export const NewsNavigator = () => {
 
 
 
-const TabStackNavigator = createBottomTabNavigator();
+const TabStackNavigator = createBottomTabNavigator();           // Bottom Tab Navigator
 export const TabNavigator = () => {
     return (
-        <TabStackNavigator.Navigator initialRouteName="News" screenOptions={{  }}
+        <TabStackNavigator.Navigator initialRouteName="News"
             screenOptions={({ route }) => ({
+
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
                     if (route.name === 'News') {
@@ -82,19 +76,21 @@ export const TabNavigator = () => {
                     }
                     if (route.name === 'Histroy') {
                         iconName = focused ? 'clock-o' : 'clock-o';
-
                     }
                     // You can return any component that you like here!
                     return <Icon name={iconName} size={size} color={color} />;
                 },
-                tabBarActiveTintColor: 'black',
+                headerShown: false,
+                tabBarActiveTintColor: '#8e7321',                   // icon color when active
                 tabBarInactiveTintColor: 'grey',
-                headerShown: false
+                tabBarStyle: {
+                    backgroundColor: 'black',
+                    borderTopColor: 'transparent'
+                }
             })}>
             <TabStackNavigator.Screen name="News" component={NewsNavigator} />
             <TabStackNavigator.Screen name="Sources" component={SourcesNavigator} />
             <TabStackNavigator.Screen name="Histroy" component={HistoryNavigator} />
-
         </TabStackNavigator.Navigator>
     )
 }
