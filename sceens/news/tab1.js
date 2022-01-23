@@ -118,8 +118,8 @@ class tab1 extends Component {
     render() {
 
         return (
-            <View padder style={{ flex: 1, alignContent: 'center', justifyContent: 'center', backgroundColor: 'lightgrey', justifyContent: 'flex-start' }}>
-                <Text style={{ alignSelf: 'flex-start', justifyContent: 'center', padding: 7, textAlign: 'left', fontWeight: 'bold' }}>Top Egypt business headlines </Text>
+            <View padder style={{ flex: 1, alignContent: 'center', justifyContent: 'center', backgroundColor: 'black', justifyContent: 'flex-start' }}>
+                <Text style={{ alignSelf: 'center',fontSize:18, justifyContent: 'center', padding: 7, textAlign: 'left', fontWeight: 'light',color:'white' }}>What's New?</Text>
 
                 {this.state.data.length > 0 ?
                     <FlatList
@@ -142,23 +142,26 @@ class tab1 extends Component {
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item, index, separators }) => {
                             let value = item;
+                            
+                            let date = new Date(value.publishedAt);
+                            let newDate =  date.toISOString().substring(0, 10);
                             return (
-                                <TouchableWithoutFeedback key={index} data={value} >
-                                    <View style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
+                                <TouchableWithoutFeedback onPress={() => this.Procced(value)} key={index} data={value} >
+                                    <View style={[Pagestyles.listContainer,!value.urlToImage?{height:deviceWidth/3}: null]} >
                                         {value.urlToImage ?
                                             <View style={{ justifyContent: 'center', alignSelf: 'center' }}>
                                                 <TouchableOpacity onPress={() => this.Procced(value)}  >
-                                                    <Image resizeMode={'contain'} source={{ uri: value.urlToImage }}
-                                                        style={{ width: 80, height: 80, alignSelf: 'center' }} />
+                                                    <Image resizeMode={'cover'} source={{ uri: value.urlToImage }}
+                                                        style={Pagestyles.imageStyle} />
                                                 </TouchableOpacity>
 
                                             </View>
                                             : null}
-
-                                        <View style={[{ paddingHorizontal: 1 }, value.urlToImage ? { width: deviceWidth / 1.5 } : { width: deviceWidth / 1.1 }]}  >
-                                            <Text numberOfLines={2} ellipsizeMode='tail' style={Pagestyles.cardText}>{value.title} </Text>
-                                            <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>  المصدر: {value.author}</Text>
-                                            <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>   تاريخ النشر{value.publishedAt}</Text>
+                                    
+                                        <View style={[{ paddingHorizontal: 1, width: deviceWidth / 1.1 }]}  >
+                                            <Text numberOfLines={3} ellipsizeMode='tail' style={Pagestyles.cardText}>{value.title},{value.author} </Text>
+                                            <Text numberOfLines={1} ellipsizeMode='tail'
+                                             style={Pagestyles.cardText}>{newDate}</Text>
 
                                         </View>
                                     </View>
@@ -182,10 +185,10 @@ class tab1 extends Component {
     const Pagestyles = StyleSheet.create({
 
         container: { alignSelf: 'center', justifyContent: 'center', },
-        listContainer: { flexDirection: 'row', alignSelf: 'center', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1 },
+        listContainer: {  alignSelf: 'center', alignItems: 'center', justifyContent:"flex-start", marginVertical: 10, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1,height:deviceWidth/1.2,backgroundColor:'#2b2b2b' },
+        imageStyle:{width:deviceWidth/1.1,height:deviceWidth/1.9,borderTopRightRadius:7,borderTopLeftRadius:7,zIndex:20,marginBottom:7} ,
         cardText: {
-            alignSelf:
-                'flex-end', textAlignVertical: 'top', textAlign: 'right'
+            alignSelf:"auto",paddingHorizontal:3,fontSize:16, textAlignVertical: 'top',color:'white'
         }
     })
 

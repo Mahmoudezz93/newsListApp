@@ -42,7 +42,7 @@ export const HistoryNavigator = () => {
 const SourcesStackNavigator = createStackNavigator();
 export const SourcesNavigator = () => {
     return (
-        <SourcesStackNavigator.Navigator initialRouteName="MainHeadlines" screenOptions={{ headerShown: false }}>
+        <SourcesStackNavigator.Navigator initialRouteName="MainHeadlines"  screenOptions={{ headerShown: false }}>
             <SourcesStackNavigator.Screen name="Soruces" component={tab2} />
             <SourcesStackNavigator.Screen name="SourceHeadlines" component={sourceHeadlines} />
             <SourcesStackNavigator.Screen name="SourceDetails" component={sourceDetails} />
@@ -71,7 +71,7 @@ export const NewsNavigator = () => {
 const TabStackNavigator = createBottomTabNavigator();
 export const TabNavigator = () => {
     return (
-        <TabStackNavigator.Navigator initialRouteName="News" screenOptions={{ headerShown: false }}
+        <TabStackNavigator.Navigator initialRouteName="News" screenOptions={{  }}
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
@@ -89,6 +89,7 @@ export const TabNavigator = () => {
                 },
                 tabBarActiveTintColor: 'black',
                 tabBarInactiveTintColor: 'grey',
+                headerShown: false
             })}>
             <TabStackNavigator.Screen name="News" component={NewsNavigator} />
             <TabStackNavigator.Screen name="Sources" component={SourcesNavigator} />

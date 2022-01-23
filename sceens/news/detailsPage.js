@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions,Linking} from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions, Linking, ImageBackground } from 'react-native'
 import axios from "axios";
 import { API, COUNTRY, KEY, TOP_HEADLINES, CATEGORY, EG, BUSINESS } from "../../functions/config";
+import LinearGradient from 'react-native-linear-gradient';
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default class detailsPage extends Component {
     constructor(props) {
@@ -29,7 +31,24 @@ export default class detailsPage extends Component {
     render() {
         const value = this.state.data
         return (
-            <View padder style={{ flex: 1, alignContent: 'center', justifyContent: 'center', backgroundColor: 'lightgrey', justifyContent: 'flex-start', padding: 5, }}>
+            <View padder style={{ flex: 1, alignContent: 'center', justifyContent: 'center', backgroundColor: 'black', justifyContent: 'flex-start', padding: 5, }}>
+                <ImageBackground resizeMode='cover' style={{ height: deviceHeight/1.3,borderRadius:7 }} source={{ uri: value.urlToImage }} >
+                    <LinearGradient colors={['rgba(0,0,0,0.3)', 'transparent']}
+                    style={{flex:0.5,justifyContent:'space-between'}}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10, paddingHorizontal: 5 }}>
+                            <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{ flexDirection: 'row',padding:12, alignItems: 'center' }}>
+
+                                <Icon name={"arrow-back-ios"} size={20} color={"white"} />
+
+                            </TouchableOpacity>
+                            
+                        </View>
+                        </LinearGradient>
+                        <LinearGradient colors={[ 'transparent','rgba(0,0,0,0.9)',]}
+                    style={{flex:0.5,justifyContent:'flex-end'}}>
+                        <Text numberOfLines={2} ellipsizeMode='tail' style={Pagestyles.cardTextMain}>{value.title} </Text>
+                        </LinearGradient>
+                </ImageBackground>
 
                 <View style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
                     {value.urlToImage ?
@@ -51,18 +70,18 @@ export default class detailsPage extends Component {
                 </View>
                 <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>   التفاصيل</Text>
                 <View style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
-                   
-                    <View style={[{ paddingHorizontal: 1 , width: deviceWidth / 1.1 }]}  >
-                        <Text   style={Pagestyles.cardText}>{value.description} </Text>
+
+                    <View style={[{ paddingHorizontal: 1, width: deviceWidth / 1.1 }]}  >
+                        <Text style={Pagestyles.cardText}>{value.description} </Text>
                     </View>
                 </View>
 
                 <Text numberOfLines={1} ellipsizeMode='tail' style={Pagestyles.cardText}>   المصادر</Text>
                 <View style={[Pagestyles.listContainer, { backgroundColor: "white" }]} >
-                   
-                    <View style={[{ paddingHorizontal: 1 , width: deviceWidth / 1.1 }]}  >
-                        <Text   onPress={() => Linking.openURL(value.url)}
-                         style={Pagestyles.cardText}>{value.url} </Text>
+
+                    <View style={[{ paddingHorizontal: 1, width: deviceWidth / 1.1 }]}  >
+                        <Text onPress={() => Linking.openURL(value.url)}
+                            style={Pagestyles.cardText}>{value.url} </Text>
                     </View>
                 </View>
 
@@ -75,9 +94,12 @@ export default class detailsPage extends Component {
 const Pagestyles = StyleSheet.create({
 
     container: { alignSelf: 'center', justifyContent: 'center', },
-    listContainer: { flexDirection: 'row', alignSelf: 'center', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1 },
+    listContainer: {  alignSelf: 'center', alignItems: 'center', justifyContent:"flex-start", marginVertical: 10, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1,height:deviceWidth/1.2,backgroundColor:'#2b2b2b' },
+    imageStyle:{width:deviceWidth/1.1,height:deviceWidth/1.9,borderTopRightRadius:7,borderTopLeftRadius:7,zIndex:20,marginBottom:7} ,
     cardText: {
-        alignSelf:
-            'flex-end', textAlignVertical: 'top', padding: 2, marginVertical: 4, textAlign: 'right',  borderRadius: 4
+        alignSelf:"auto",paddingHorizontal:3,fontSize:16, textAlignVertical: 'top',color:'white'
+    },
+    cardTextMain:{
+        alignSelf:"auto",paddingHorizontal:3,fontSize:20, textAlignVertical: 'top',color:'white'
     }
 })
