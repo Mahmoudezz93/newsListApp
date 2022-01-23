@@ -46,7 +46,7 @@ class tab3 extends Component {
 
         await this.AddToCart(headline);
         console.log("added to cart")
-        await this.props.navigation.navigate("headlineDetails", { data: headline, })
+        await this.props.navigation.navigate("HistoryDetails", { data: headline, })
     }
 
     AddToCart = async (value) => {

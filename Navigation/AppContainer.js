@@ -20,9 +20,23 @@ import sourceDetails from "../sceens/newsSources/sourceDetails"
 
 // History Stack // 
 import tab3 from "../sceens/newsHistory/tab3";
+import historyDetails from "../sceens/newsHistory/historyDetails"
 
 
 
+
+
+
+const HistoryStackNavigator = createStackNavigator();
+export const HistoryNavigator = () => {
+    return (
+        <HistoryStackNavigator.Navigator initialRouteName="Histroy" screenOptions={{ headerShown: false }}>
+            <HistoryStackNavigator.Screen name="Histroy" component={tab3} />
+             <HistoryStackNavigator.Screen name="HistoryDetails" component={historyDetails} />
+
+        </HistoryStackNavigator.Navigator>
+    )
+}
 
 
 const SourcesStackNavigator = createStackNavigator();
@@ -78,7 +92,7 @@ export const TabNavigator = () => {
             })}>
             <TabStackNavigator.Screen name="News" component={NewsNavigator} />
             <TabStackNavigator.Screen name="Sources" component={SourcesNavigator} />
-            <TabStackNavigator.Screen name="Histroy" component={tab3} />
+            <TabStackNavigator.Screen name="Histroy" component={HistoryNavigator} />
 
         </TabStackNavigator.Navigator>
     )

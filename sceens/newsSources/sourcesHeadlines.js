@@ -19,18 +19,21 @@ class sourceHeadlines extends Component {
         fetching_from_server: false,
         endThreshold: 2,
         refreshing: false,
-        source:''
+        source:'',dateNow: ''
     }
 
     componentDidMount = async () => {
         await this.setState({ isReady: false });
         const { navigation } = this.props;
         const Data = this.props.route.params.data
-        console.log("ddsdsd",Data)
         await this.setState({source: Data,});
         await this.Get_News('reset');
-        await this.setState({ isReady: true });
-        console.log(this.state.data)
+        await this.Get_News('reset');
+        const today = new Date();
+        await this.setState({
+            dateNow: today,
+            isReady: true
+        });
     }
 
 
