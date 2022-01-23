@@ -32,6 +32,7 @@ class tab3 extends Component {
             dateNow: today,
             isReady: true
         });
+        console.log("today is ",this.state.dateNow)
     }
 
     _onRefresh = async () => {
@@ -52,8 +53,8 @@ class tab3 extends Component {
     AddToCart = async (value) => {
         let item = value;
         const newItem = {
-            id: item.source.id ? item.source.id : null,
-            name: item.source.name,
+            id: item.id ? item.id : null,
+            name: item.name,
             author: item.author,
             note: item.note,
             title: item.title,
