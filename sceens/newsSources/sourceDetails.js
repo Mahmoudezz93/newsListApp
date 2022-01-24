@@ -21,8 +21,8 @@ export default class sourceDetails extends Component {
     componentDidMount = async () => {
         await this.setState({ isReady: false });
         const { navigation } = this.props;
-        const Data = this.props.route.params.data
-        await this.setState({
+        const Data = this.props.route.params.data                               // reciveing data passed from the parent
+        await this.setState({   
             data: Data,
             isReady: true
         });

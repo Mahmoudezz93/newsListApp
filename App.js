@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Provider } from "react-redux";
 import config from "./store/config";
 
-// React Navigation v6 // 
+// React Navigation v6 App Container // 
 import AppContainer from "../newsListApp/Navigation/AppContainer"; 
 
 //  redux store 
@@ -12,9 +12,9 @@ const store = config();
 
 
 export default function App() {
-  return (
-    <Provider store = { store } >
-    < AppContainer/>
+  return (                              // creating redux store, // 
+    <Provider store = { store } >         
+    < AppContainer/>                     
     </Provider>
   );
 }

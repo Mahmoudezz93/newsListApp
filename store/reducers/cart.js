@@ -31,7 +31,7 @@ const cart = (state = initial_state, action) => {
             name:action.name,
             author:action.author,
             note:action.note,
-            title:action.title,           // we will use this to diff the items 
+            title:action.title,           // we will use this to diff the items from each others 
             description:action.description,
             url:action.url,
             urlToImage:action.urlToImage,

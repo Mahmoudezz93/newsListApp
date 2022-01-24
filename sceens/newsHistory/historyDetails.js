@@ -20,7 +20,7 @@ export default class historyDetails extends Component {
     componentDidMount = async () => {
         await this.setState({ isReady: false });
         const { navigation } = this.props;
-        const Data = this.props.route.params.data
+        const Data = this.props.route.params.data                           // recviveing the data from the parent 
         await this.setState({
             data: Data,
             isReady: true

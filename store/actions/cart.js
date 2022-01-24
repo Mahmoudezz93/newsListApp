@@ -21,7 +21,7 @@ export const addItem = (item) => {
 export const deleteItem = (item) => {
     return {
         type: DELETE_ITEM,
-        // id to select item , qty to delete 
+        // title to select item  
         title:item.title
     }
 };
@@ -44,5 +44,3 @@ export const setItems = (items) => {
     };
 
 }
-
-     

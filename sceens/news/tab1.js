@@ -9,7 +9,7 @@ import { addItem, deleteItem, setItems } from "../../store/actions/index";
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
 const Default_image = require("../../assets/no_image.jpg");
-import Loader from "../loader"; 
+import Loader from "../loader";
 class tab1 extends Component {
 
     constructor(props) {
@@ -17,9 +17,7 @@ class tab1 extends Component {
     }
 
     state = {
-        data: [], isReady: false, page: 1,
-        fetching_from_server: false,
-        endThreshold: 2,
+        data: [], isReady: false, page: 1, fetching_from_server: false, endThreshold: 2,
         refreshing: false, dateNow: ''
     }
 
@@ -29,20 +27,18 @@ class tab1 extends Component {
         await this.Get_News('reset');
         const today = new Date();
         await this.setState({
-            dateNow: today,
-            isReady: true
+            dateNow: today, isReady: true                   // dateNow for date of viewing the post to add it in redux 
         });
     }
 
 
-    Get_News = async (mode) => {
+    Get_News = async (mode) => {                            // Get News from the request 
         this.setState({ fetching_from_server: true });
         const token = this.state.token;
         if (mode == 'reset') {
             await axios
-                
                 .get(API + TOP_HEADLINES + "?" + COUNTRY + EG + CATEGORY + BUSINESS + "page=1" + "&apiKey=" + KEY)
-               
+
                 .then(result => {
                     this.setState({
                         data: result.data.articles,
@@ -57,11 +53,11 @@ class tab1 extends Component {
                     }
                 });
         } else {
-            console.log('get data of page -> ' + this.state.page)
+            //  console.log('get data of page -> ' + this.state.page)
             await axios
                 .get(API + TOP_HEADLINES + COUNTRY + EG + CATEGORY + BUSINESS + "page=" + this.state.page + "&apiKey" + KEY)
                 .then(result => {
-                    console.log("iamhere")
+                    // console.log("iamhere")
                     if (result.data.articles.length > 0) {
                         this.setState({
                             data: [...this.state.data, ...result.data.articles]
@@ -69,11 +65,11 @@ class tab1 extends Component {
                         this.setState({ page: this.state.page + 1 })
 
                     } else {
-                        console.log("endreached")
+                        //  console.log("endreached")
                     }
                 })
                 .catch(error => {
-                    console.log(error.response.data.error);
+                    //  console.log(error.response.data.error);
                 });
         }
         this.setState({ fetching_from_server: false });
@@ -81,25 +77,24 @@ class tab1 extends Component {
     }
 
 
-    _onRefresh = () => {
+    _onRefresh = () => {                                   // refreshing the requst on pull the UI 
         this.setState({ refreshing: true });
         this.Get_News('reset').then(() => {
-            this.setState({ refreshing: false });
+        this.setState({ refreshing: false });
         });
     }
 
     Procced = async (headline) => {
-        console.log("will added to cart")
-
+        //console.log("will added to cart")                // add the post to redux cart and navigate next 
         await this.AddToCart(headline);
-        console.log("added to cart")
+        //console.log("added to cart")
         await this.props.navigation.navigate("headlineDetails", { data: headline, })
     }
 
-    AddToCart = async (value) => {
+    AddToCart = async (value) => {                         // add the post to the redux 
         let item = value;
         const newItem = {
-            id: item.source.id ? item.source.id : null ,
+            id: item.source.id ? item.source.id : null,
             name: item.source.name,
             author: item.author,
             note: item.note,
@@ -112,104 +107,101 @@ class tab1 extends Component {
             viewdAt: this.state.dateNow
         }
         await this.props.OnAdd(newItem);
-        console.log(this.props.RX_items);
+        //console.log(this.props.RX_items);
     }
 
 
     render() {
-        
         return (
             this.state.isReady ?
-            <View padder style={{ flex: 1, alignContent: 'center', justifyContent: 'center', backgroundColor: 'black', justifyContent: 'flex-start' }}>
-                <Text style={{ alignSelf: 'center',fontSize:18, justifyContent: 'center', padding: 7, textAlign: 'left', fontWeight: 'light',color:'white' }}>What's New?</Text>
+                <View padder style={{ flex: 1, alignContent: 'center', justifyContent: 'center', backgroundColor: 'black', justifyContent: 'flex-start' }}>
+                    <Text style={{ alignSelf: 'center', fontSize: 18, justifyContent: 'center', padding: 7, textAlign: 'left', fontWeight: 'light', color: 'white' }}>What's New?</Text>
 
-                {this.state.data.length > 0 ?
-                    <FlatList
-                        style={{
-                            flex: 1, alignSelf: 'center',
-                            alignContent: 'center', paddingTop: 1.5
-                            , paddingBottom: 10, paddingHorizontal: 1, marginTop: 5,
-                        }}
-                        numColumns={1}
-                        contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center' }}
-                        onEndReachedThreshold={this.state.endThreshold}
-                        data={this.state.data}
+                    {this.state.data.length > 0 ?
+                        <FlatList
+                            style={{
+                                flex: 1, alignSelf: 'center',
+                                alignContent: 'center', paddingTop: 1.5
+                                , paddingBottom: 10, paddingHorizontal: 1, marginTop: 5,
+                            }}
+                            numColumns={1}
+                            contentContainerStyle={{ justifyContent: 'center', alignSelf: 'center' }}
+                            onEndReachedThreshold={this.state.endThreshold}
+                            data={this.state.data}
 
-                        onEndReached={() => {
-                            this.state.fetching_from_server == false ? this.Get_News('scroll') : null
-                        }}
-                        refreshing={this.state.refreshing}
-                        onRefresh={this._onRefresh.bind(this)}
+                            onEndReached={() => {
+                                this.state.fetching_from_server == false ? this.Get_News('scroll') : null
+                            }}
+                            refreshing={this.state.refreshing}
+                            onRefresh={this._onRefresh.bind(this)}
 
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item, index, separators }) => {
-                            let value = item;
-                            
-                            let date = new Date(value.publishedAt);
-                            let newDate =  date.toISOString().substring(0, 10);
-                            return (
-                                <TouchableWithoutFeedback onPress={() => this.Procced(value)} key={index} data={value} >
-                                    <View style={[Pagestyles.listContainer,!value.urlToImage?{height:deviceWidth/3}: null]} >
-                                        {value.urlToImage ?
-                                            <View style={{ justifyContent: 'center', alignSelf: 'center' }}>
-                                                <TouchableOpacity onPress={() => this.Procced(value)}  >
-                                                    <Image resizeMode={'cover'} source={{ uri: value.urlToImage ?value.urlToImage : Default_image  }} defaultSource={Default_image} 
-                                                        style={Pagestyles.imageStyle} />
-                                                </TouchableOpacity>
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item, index, separators }) => {
+                                let value = item;
+
+                                let date = new Date(value.publishedAt);
+                                let newDate = date.toISOString().substring(0, 10);
+                                return (
+                                    <TouchableWithoutFeedback onPress={() => this.Procced(value)} key={index} data={value} >
+                                        <View style={[Pagestyles.listContainer, !value.urlToImage ? { height: deviceWidth / 3 } : null]} >
+                                            {value.urlToImage ?
+                                                <View style={{ justifyContent: 'center', alignSelf: 'center' }}>
+                                                    <TouchableOpacity onPress={() => this.Procced(value)}  >
+                                                        <Image resizeMode={'cover'} source={{ uri: value.urlToImage ? value.urlToImage : Default_image }} defaultSource={Default_image}
+                                                            style={Pagestyles.imageStyle} />
+                                                    </TouchableOpacity>
+                                                </View>
+                                                : null}
+
+                                            <View style={[{ paddingHorizontal: 1, width: deviceWidth / 1.1 }]}  >
+                                                <Text numberOfLines={3} ellipsizeMode='tail' style={Pagestyles.cardText}>{value.title},{value.author} </Text>
+                                                <Text numberOfLines={1} ellipsizeMode='tail'
+                                                    style={Pagestyles.cardText}>{newDate}</Text>
 
                                             </View>
-                                            : null}
-                                    
-                                        <View style={[{ paddingHorizontal: 1, width: deviceWidth / 1.1 }]}  >
-                                            <Text numberOfLines={3} ellipsizeMode='tail' style={Pagestyles.cardText}>{value.title},{value.author} </Text>
-                                            <Text numberOfLines={1} ellipsizeMode='tail'
-                                             style={Pagestyles.cardText}>{newDate}</Text>
-
                                         </View>
-                                    </View>
-                                </TouchableWithoutFeedback>
-                            )
-                        }
-                        }
-                    />
-                    :
-                    <View style={{ alignContent: "center", alignSelf: "center", justifyContent: "center", flex: 1, padding: 20 }}>
-                        <Text > There is no data available</Text>
+                                    </TouchableWithoutFeedback>
+                                )
+                            }
+                            }
+                        />
+                        :
+                        <View style={{ alignContent: "center", alignSelf: "center", justifyContent: "center", flex: 1, padding: 20, }}>
+                        <Text style={{color:'white'}} > There is no data available</Text>
                     </View>}
 
-            </View>
-            : <Loader/>
+                </View>
+                : <Loader />
         )
     }
 }
 
 
-    const Pagestyles = StyleSheet.create({
+const Pagestyles = StyleSheet.create({
 
-        container: { alignSelf: 'center', justifyContent: 'center', },
-        listContainer: {  alignSelf: 'center', alignItems: 'center', justifyContent:"flex-start", marginVertical: 10, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1,height:deviceWidth/1.2,backgroundColor:'#2b2b2b' },
-        imageStyle:{width:deviceWidth/1.1,height:deviceWidth/1.9,borderTopRightRadius:7,borderTopLeftRadius:7,zIndex:20,marginBottom:7} ,
-        cardText: {
-            alignSelf:"auto",paddingHorizontal:3,fontSize:16, textAlignVertical: 'top',color:'white'
-        }
-    })
-
-
-
-
-
-    const mapStateToProps = state => {
-        return {
-            RX_items: state.cart.items,
-        };
+    container: { alignSelf: 'center', justifyContent: 'center', },
+    listContainer: { alignSelf: 'center', alignItems: 'center', justifyContent: "flex-start", marginVertical: 10, borderRadius: 7, marginBottom: 7, width: deviceWidth / 1.1, height: deviceWidth / 1.2, backgroundColor: '#2b2b2b' },
+    imageStyle: { width: deviceWidth / 1.1, height: deviceWidth / 1.9, borderTopRightRadius: 7, borderTopLeftRadius: 7, zIndex: 20, marginBottom: 7 },cardText: {
+        alignSelf: "auto", paddingHorizontal: 3, fontSize: 16, textAlignVertical: 'top', color: 'white'
     }
-    const mapDispatchToProps = dispatch => {
-        return {
-            OnAdd: item => { dispatch(addItem(item)) },
-            OnRemove: item => { dispatch(deleteItem(item)) },
-            OnSetAll: items => { dispatch(setItems(items)) }
-        };
-    }
+})
+
+
+
+
+
+const mapStateToProps = state => {
+    return {
+        RX_items: state.cart.items,
+    };
+}
+const mapDispatchToProps = dispatch => {
+    return {
+        OnAdd: item => { dispatch(addItem(item)) },
+        OnRemove: item => { dispatch(deleteItem(item)) },
+        OnSetAll: items => { dispatch(setItems(items)) }
+    };
+}
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(tab1);
